@@ -7,6 +7,13 @@ import java.util.*;
  * @Date 2025/12/16 22:17
  * @Description 49.字母异位词分组
  * 给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+ * 输入：
+ * 6
+ * eat tea tan ate nat bat
+ * 输出：
+ * bat
+ * nat tan
+ * ate eat tea
  **/
 
 public class groupAnagrams {
