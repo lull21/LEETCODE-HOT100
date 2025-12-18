@@ -13,6 +13,10 @@ import java.util.*;
  * 100 4 200 1 3 2
  * 输出：
  * 4
+ * 题解：
+ * 采用HashSet,无序、唯一，存入数据。
+ * 遍历HashSet,一旦当前数字不连续，就开始以当前数为最小值，while遍历寻找以当前数为最小值的连续序列，并更新结果；
+ * contains()函数查找HashSet
  **/
 
 public class longestConsecutive {

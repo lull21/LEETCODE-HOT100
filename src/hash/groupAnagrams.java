@@ -14,6 +14,15 @@ import java.util.*;
  * bat
  * nat tan
  * ate eat tea
+ * 题解：
+ * 用HashMap,Map<String, List<String>>。
+ * 其中map的key值，将字符串转换为字符数组，然后字符数组重排序得到唯一键。
+ * map中各个key对应的的value值
+ *  Arrays.sort(chars);
+ *  String key = new String(chars); // 获得唯一键
+ *  List<String> list = map.getOrDefault(key, new ArrayList<String>());
+ *  list.add(s);
+ *  map.put(key, list);
  **/
 
 public class groupAnagrams {

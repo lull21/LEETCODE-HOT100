@@ -15,6 +15,8 @@ import java.util.Map;
  * 9
  * 输出：
  * 0 1
+ * 题解：
+ * 用HashMap,containsKey()函数；
  **/
 
 public class twoSum {
