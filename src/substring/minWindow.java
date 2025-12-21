@@ -27,6 +27,8 @@ import java.util.*;
  * 2. 为什么用 equals 而不是 ==？
  * 在 Java 中，Map.get() 返回的是 Integer 对象。
  * 对于大于 127 的数值，用 == 比较的是地址。为了稳妥，必须用 .equals() 比较数值。
+ * 口诀：
+ * 右移找可行，左移找最优。 Need 存目标，Window 存当前。 Valid 满额时，开始缩左边。
  **/
 
 public class minWindow {
