@@ -50,6 +50,7 @@ public class spiralOrder {
         int right = n - 1;
 
         // 当边界没有重叠时候，继续循环
+        // 上->右->下->左（top->right->bottom->left）遍历哪边，哪边固定不变
         while(top <= bottom && left <= right) {
             // 步骤一：从左到右遍历上边界
             for(int i = left; i <= right; i++) {
