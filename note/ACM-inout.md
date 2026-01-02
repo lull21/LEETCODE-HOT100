@@ -113,6 +113,29 @@ for (List<String> group : result) {
         }
 ```
 
+
+
+**输入一串分割**
+
+```java
+// 处理输入：假设输入为两行，每行数字以空格分隔
+        if (!sc.hasNextLine()) return;
+        int[] preorder = parseArray(sc.nextLine());
+        if (!sc.hasNextLine()) return;
+        int[] inorder = parseArray(sc.nextLine());
+
+	private static int[] parseArray(String line) {
+        String[] parts = line.trim().split("\\s+");
+        int[] res = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            res[i] = Integer.parseInt(parts[i]);
+        }
+        return res;
+    }
+```
+
+
+
 **输出：**
 
 ```
@@ -414,4 +437,172 @@ tail.next = curr;
 ```
 
 
+
+## 接收数字后再接收字符串会，换行符也会占用
+
+**问题原因：** 当你使用 `sc.nextInt()` 读取第一个数字后，输入缓冲区中会留下一个换行符。然后 `sc.nextLine()` 会立即读取这个换行符，导致第一个链表读取为空字符串，因此第一个链表没有被正确处理。
+
+### 解决方案
+
+在读取第一个数字后，添加一个 `sc.nextLine()` 来消耗掉换行符：
+
+```
+public class mergeKLists {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        sc.nextLine(); // 添加这行来消耗换行符
+        
+        ListNode[] list = new ListNode[n];
+        for(int i = 0; i < n; i++) {
+            String line = sc.nextLine();
+            list[i] = buildList(line);
+        }
+        
+        // ... 其余代码不变
+    }
+}
+```
+
+或者数字也按照字符串接收
+
+```java
+		int n = Integer.parseInt(sc.nextLine());
+
+        ListNode[] list = new ListNode[n];
+        for(int i = 0; i < n; i++) {
+            String line = sc.nextLine();
+            list[i] = buildList(line);
+        }
+```
+
+
+
+## 接收多个链表-按照字符串接收处理
+
+```
+		int n = Integer.parseInt(sc.nextLine());
+
+        ListNode[] list = new ListNode[n];
+        for(int i = 0; i < n; i++) {
+            String line = sc.nextLine();
+            list[i] = buildList(line);
+        }
+        
+        public static ListNode buildList(String line) {
+            if(line == null || line.trim().isEmpty()) return null;
+            String[] parts = line.trim().split("\\s+");
+            ListNode dummy = new ListNode(0);
+            ListNode curr = dummy;
+            for(String p : parts) {
+                curr.next = new ListNode(Integer.parseInt(p));
+                curr = curr.next;
+            }
+            return dummy.next;
+    	}
+```
+
+
+
+# 二叉树
+
+
+
+```java
+public class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode() {}
+    TreeNode(int val) {
+        this.val = val;
+    }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+```
+
+
+
+## 普通二叉树输入构造
+
+- **`==` 和 `!=`**：比较对象引用，如果字符串不是同一个对象（即使内容相同），比较会失败
+- **`.equals()`**：比较字符串内容，确保正确判断字符串是否为 "null"
+
+```
+		Scanner sc = new Scanner(System.in);
+
+        String line = sc.nextLine();
+        String[] parts = line.split("\\s+");
+
+        TreeNode root = bulidTree(parts);
+        
+        public static TreeNode bulidTree(String[] parts) {
+            if (parts.length == 0 || parts[0].equals("null")) return null;
+
+            TreeNode root = new TreeNode(Integer.parseInt(parts[0]));
+            Queue<TreeNode> queue = new LinkedList<>();
+            queue.add(root);
+
+            int i = 1;
+            while (!queue.isEmpty() && i < parts.length) {
+                TreeNode node = queue.poll();
+
+                // 处理左孩子
+                if (i < parts.length && !parts[i].equals("null")) {
+                    node.left = new TreeNode(Integer.parseInt(parts[i]));
+                    queue.add(node.left);
+                }
+                i++;
+
+                // 处理右孩子
+                if (i < parts.length && !parts[i].equals("null")) {
+                    node.right = new TreeNode(Integer.parseInt(parts[i]));
+                    queue.add(node.right);
+                }
+                i++;
+            }
+            return root;
+        }
+```
+
+
+
+## 二叉树遍历输出
+
+
+
+```
+/**
+     * 层序打印（用于输出验证）
+     */
+    public static void printTree(TreeNode root) {
+        if (root == null) return;
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        List<String> res = new ArrayList<>();
+        
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if (node != null) {
+                res.add(String.valueOf(node.val));
+                queue.add(node.left);
+                queue.add(node.right);
+            } else {
+                res.add("null");
+            }
+        }
+        
+        // 移除末尾多余的 null 以符合常规格式
+        int last = res.size() - 1;
+        while (last >= 0 && res.get(last).equals("null")) {
+            res.remove(last--);
+        }
+        System.out.println(String.join(" ", res));
+    }
+```
 

@@ -29,7 +29,7 @@ import java.util.*;
  * null
  * -1
  * null
- * 题解：双向链表+哈希表
+ * 题解：【双向链表+哈希表】缓存淘汰算法，当缓存容量满时，淘汰最久未使用的数据。
  * 操作逻辑：
  * 1.get(key)：
  *   如果 Hash 中不存在，返回 -1。
@@ -52,12 +52,10 @@ public class LRUCache {
     }
 
     private Map<Integer, Node> cache = new HashMap<>();
-    private int size;
     private int capacity;
     private Node head, tail;
 
     public LRUCache(int capacity) {
-        this.size = 0;
         this.capacity = capacity;
         // 使用伪头部和伪尾部节点，简化插入和删除逻辑
         head = new Node();
@@ -75,26 +73,29 @@ public class LRUCache {
     }
 
     public void put(int key, int value) {
-        Node node = cache.get(key);
-        if(node == null) {
-            Node newNode = new Node(key, value);
-            cache.put(key, newNode);
-            addToHead(newNode);
-            size++;
-            if (size > capacity) {
-                // 如果超出容量，删除尾部
-                Node tail = removeTail();
-                cache.remove(tail.key);
-                size--;
-            }
-        } else {
+        if (cache.containsKey(key)) {
+            // key已存在，更新value并移动到头部
+            Node node = cache.get(key);
             node.value = value;
             moveToHead(node);
+        } else {
+            // 创建新节点
+            Node newNode = new Node(key, value);
+
+            // 添加到哈希表和链表头部
+            cache.put(key, newNode);
+            addToHead(newNode);
+
+            // 如果超过容量，删除尾部节点（最久未使用）
+            if (cache.size() > capacity) {
+                Node tailNode = removeTail();
+                cache.remove(tailNode.key);
+            }
         }
     }
 
     // --- 内部辅助方法：链表操作的四大金刚 ---
-
+    // 辅助方法1：添加节点到链表头部
     private void addToHead(Node node) {
         node.prev = head;
         node.next = head.next;
@@ -102,16 +103,19 @@ public class LRUCache {
         head.next = node;
     }
 
+    // 辅助方法2：从链表中删除节点
     private void removeNode(Node node) {
         node.prev.next = node.next;
         node.next.prev = node.prev;
     }
 
+    // 辅助方法3：将节点移动到头部（先删除再添加到头部）
     private void moveToHead(Node node) {
         removeNode(node);
         addToHead(node);
     }
 
+    // 辅助方法4：删除尾部节点（最久未使用）
     private Node removeTail() {
         Node res = tail.prev;
         removeNode(res);
