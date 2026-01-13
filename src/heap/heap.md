@@ -157,8 +157,6 @@ PriorityQueue<Node> heap = new PriorityQueue<>(
 
 ## HashMap-Heap
 
-
-
 ```java
 PriorityQueue<Map.Entry<Integer, Integer>> heap = new PriorityQueue<>(
 按键升序	(a, b) -> a.getKey() - b.getKey()	堆顶是最小的键
@@ -177,3 +175,134 @@ PriorityQueue<Map.Entry<Integer, Integer>> heap = new PriorityQueue<>(
  }
 ```
 
+
+
+## Map.Entry
+
+### 1. Map.Entry 是什么？
+
+`Map.Entry`是Java中Map接口的一个内部接口，它表示Map中的一个键值对（key-value pair）。每个Map.Entry对象包含：
+
+- 一个键（key）
+- 一个值（value）
+
+### 2. 泛型参数的含义
+
+`Map.Entry<Integer, Integer>`中的两个`Integer`是泛型参数：
+
+- **第一个`Integer`**：键（key）的类型
+- **第二个`Integer`**：值（value）的类型
+
+### 3. 为什么这样设计？
+
+场景：统计元素频率
+
+在`topKFrequent.java`中，这种设计非常适合**统计元素出现频率**的问题：
+
+```
+// 示例：统计数组中每个数字出现的频率
+int[] nums = {1, 1, 1, 2, 2, 3};
+Map<Integer, Integer> frequencyMap = new HashMap<>();
+
+for (int num : nums) {
+    frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
+}
+
+// 此时frequencyMap的内容：
+// key=1, value=3  (数字1出现3次)
+// key=2, value=2  (数字2出现2次)  
+// key=3, value=1  (数字3出现1次)
+```
+
+### 4. 实际应用示例
+
+```
+// 创建频率统计Map
+Map<Integer, Integer> freqMap = new HashMap<>();
+freqMap.put(1, 3);  // 数字1出现3次
+freqMap.put(2, 2);  // 数字2出现2次
+freqMap.put(3, 1);  // 数字3出现1次
+
+// 使用Map.Entry来遍历键值对
+for (Map.Entry<Integer, Integer> entry : freqMap.entrySet()) {
+    int number = entry.getKey();     // 获取数字
+    int frequency = entry.getValue(); // 获取出现次数
+    System.out.println("数字 " + number + " 出现了 " + frequency + " 次");
+}
+```
+
+### 5. 在优先队列中的应用
+
+在`topKFrequent.java`中，使用`Map.Entry<Integer, Integer>`的原因：
+
+```
+PriorityQueue<Map.Entry<Integer, Integer>> heap = new PriorityQueue<>(
+    (a, b) -> a.getValue() - b.getValue()
+);
+
+// 这样我们可以同时访问数字和它的频率：
+for (Map.Entry<Integer, Integer> entry : frequencyMap.entrySet()) {
+    heap.offer(entry);
+    if (heap.size() > k) {
+        heap.poll(); // 移除频率最小的元素
+    }
+}
+
+// 最终堆中保留的是频率最大的K个数字及其频率
+```
+
+### 6. 替代方案对比
+
+如果不使用`Map.Entry`，我们需要其他方式：
+
+**方案1：使用两个数组**
+
+```
+int[] numbers = new int[n];
+int[] frequencies = new int[n];
+// 需要手动维护对应关系，容易出错
+```
+
+**方案2：自定义类**
+
+```
+class NumberFrequency {
+    int number;
+    int frequency;
+    // 需要额外定义类和方法
+}
+```
+
+**方案3：使用Map.Entry（推荐）**
+
+- ✅ 内置Java类，无需额外定义
+- ✅ 类型安全，泛型保证
+- ✅ 提供标准的getKey()/getValue()方法
+- ✅ 与Map完美配合
+
+### 7. 其他可能的类型组合
+
+根据不同的应用场景，`Map.Entry`可以有各种类型组合：
+
+```
+// 字符串频率统计
+Map.Entry<String, Integer>  // key:字符串, value:频率
+
+// 学生成绩统计  
+Map.Entry<String, Double>   // key:学生姓名, value:成绩
+
+// 单词计数
+Map.Entry<Character, Integer> // key:字符, value:出现次数
+```
+
+### 8. 总结
+
+`Map.Entry<Integer, Integer>`这样设计是因为：
+
+1. **语义清晰**：明确表示"整数-整数"的键值对关系
+2. **类型安全**：泛型确保编译时类型检查
+3. **高效便捷**：内置方法直接操作键值对
+4. **标准规范**：符合Java集合框架的设计模式
+5. **适用场景**：完美匹配频率统计类问题的需求
+
+这种设计让代码既简洁又类型安全，是处理键值对数据的标准方式。
