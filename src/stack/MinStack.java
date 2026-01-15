@@ -35,13 +35,13 @@ public class MinStack {
 
     public void push(int val) {
         stack.push(val);
-        if(minStack.isEmpty() || val <= minStack.peek()) {
+        if(minStack.isEmpty() || val <= minStack.peek()) { // 等于时也入栈，出栈时需要判断是否等于最小栈栈顶元素
             minStack.push(val);
         }
     }
 
     public void pop() {
-        if(stack.pop().equals(minStack.peek())) {
+        if(stack.pop().equals(minStack.peek())) { // 不能用==，因为栈中元素为Integer类型，需要用equals方法
             minStack.pop();
         }
     }
