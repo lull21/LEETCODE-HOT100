@@ -29,18 +29,30 @@ public class longestValidParentheses {
         Scanner sc = new Scanner(System.in);
         String s = sc.nextLine();
 
+        // 1. 创建栈
         Deque<Integer> stack = new ArrayDeque<>();
+
+        // 2. 【核心技巧】放入哨兵 -1
+        // 它的作用是方便计算长度，比如第一个匹配是 "()" (下标0和1)
+        // 长度计算就是: 1 - (-1) = 2
         stack.push(-1);
         int res = 0;
 
+        // 3. 遍历字符串
         for(int i = 0; i < s.length(); i++) {
             if(s.charAt(i) == '(') {
+                // 左括号：只存下标
                 stack.push(i);
             } else {
+                // 右括号：先弹出匹配
                 stack.pop();
                 if(stack.isEmpty()) {
+                    // 如果栈空了，说明这个 ')' 是多余的，没人配对
+                    // 它变成了新的“断点”或“起点”，把它入栈
                     stack.push(i);
                 } else {
+                    // 如果栈不空，说明配对成功
+                    // 长度 = 当前位置 - 栈顶那个“上次没配对的位置”
                     res = Math.max(res, i - stack.peek());
                 }
             }
